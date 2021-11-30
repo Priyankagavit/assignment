@@ -158,9 +158,9 @@ class ProductFormState extends State<ProductForm> {
               _buildLaunchAt(),
               SizedBox(height: 16),
               _buildLaunchSite(),
-              SizedBox(height: 20),
+              SizedBox(height: 16),
               _buildPopularity(),
-              SizedBox(height: 20),
+              SizedBox(height: 16),
               widget.product == null
                   ? RaisedButton(
                       child: Text(

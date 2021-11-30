@@ -27,30 +27,28 @@ class _ProductListState extends State<ProductList> {
 
   showProductDialog(BuildContext context, Product product, int index) {
     showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                content: Text('Do you really want to delete ?'),
-                actions: <Widget>[
-                  FlatButton(
-                    onPressed: () =>
-                         DatabaseProvider.db.delete(product.id).then((_) {
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text('Do you really want to delete ?'),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () => DatabaseProvider.db.delete(product.id).then((_) {
               BlocProvider.of<ProductBloc>(context).add(
                 DeleteProduct(index),
               );
               Navigator.pop(context);
             }),
-                    child: Text('OK'),
-                  ),
-                  FlatButton(
-                    onPressed: () =>  Navigator.pop(context),
-                    child: Text('CANCEL'),
-                  ),
-                ],
-              ),
-            );
+            child: Text('OK'),
+          ),
+          FlatButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('CANCEL'),
+          ),
+        ],
+      ),
+    );
   }
 
- 
   @override
   Widget build(BuildContext context) {
     print("Building entire product list scaffold");
@@ -64,44 +62,54 @@ class _ProductListState extends State<ProductList> {
         color: Colors.grey,
         child: BlocConsumer<ProductBloc, List<Product>>(
           builder: (context, productList) {
-            return ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                print("productList: $productList");
+            return productList.isEmpty
+                ? Center(
+                    child: Text(
+                    'No Products Added',
+                    style: TextStyle(fontSize: 28),
+                  ))
+                : ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      print("productList: $productList");
 
-                Product product = productList[index];
-                return Card(
-                  child: ListTile(
-                    contentPadding: EdgeInsets.all(16),
-                    title: Text(product.name, style: TextStyle(fontSize: 26)),
-                    subtitle: Text(
-                      "Launch Site: ${product.launchSite}\nLaunchAt: ${product.launchedAt}\nPopularity: ${product.popularity}",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    trailing: Wrap(
-                      spacing: 2, // space between two icons
-                      children: <Widget>[
-                        FlatButton(
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductForm(
-                                  product: product, productIndex: index,isFrom: true,),
-                            ),
+                      Product product = productList[index];
+                      return Card(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.all(16),
+                          title: Text(product.name,
+                              style: TextStyle(fontSize: 26)),
+                          subtitle: Text(
+                            "Launch Site: ${product.launchSite}\nLaunchAt: ${product.launchedAt}\nPopularity: ${product.popularity}",
+                            style: TextStyle(fontSize: 20),
                           ),
-                          child: Icon(Icons.update),
-                        ), // icon-2
-                        FlatButton(
-                          onPressed: () =>
-                              showProductDialog(context, product, index),
-                          child: Icon(Icons.delete),
-                        ), // icon-1
-                      ],
-                    ),
-                  ),
-                );
-              },
-              itemCount: productList.length,
-            );
+                          trailing: Wrap(
+                            spacing: 2, // space between two icons
+                            children: <Widget>[
+                              FlatButton(
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProductForm(
+                                      product: product,
+                                      productIndex: index,
+                                      isFrom: true,
+                                    ),
+                                  ),
+                                ),
+                                child: Icon(Icons.update),
+                              ), // icon-2
+                              FlatButton(
+                                onPressed: () =>
+                                    showProductDialog(context, product, index),
+                                child: Icon(Icons.delete),
+                              ), // icon-1
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    itemCount: productList.length,
+                  );
           },
           listener: (BuildContext context, productList) {},
         ),
@@ -110,7 +118,10 @@ class _ProductListState extends State<ProductList> {
         child: Icon(Icons.add),
         onPressed: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (BuildContext context) => ProductForm(isFrom: false,)),
+          MaterialPageRoute(
+              builder: (BuildContext context) => ProductForm(
+                    isFrom: false,
+                  )),
         ),
       ),
     );
